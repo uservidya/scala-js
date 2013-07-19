@@ -1376,9 +1376,19 @@ abstract class GenJSCode extends SubComponent
               genPrimitiveJSCall(app)
             } else {
               val instance = genExpr(receiver)
+              val method = encodeMethodSym(fun.symbol)
               val arguments = args map genExpr
 
-              js.ApplyMethod(instance, encodeMethodSym(fun.symbol), arguments)
+              if (fun.symbol.isEffectivelyFinal) {
+                val proto = js.DotSelect(
+                    encodeClassSym(fun.symbol.owner), js.Ident("prototype"))
+                js.ApplyMethod(
+                    js.DotSelect(proto, method),
+                    js.Ident("call"),
+                    instance :: arguments)
+              } else {
+                js.ApplyMethod(instance, method, arguments)
+              }
             }
           }
       }
