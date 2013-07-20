@@ -29,25 +29,16 @@ trait GenJSFiles extends SubComponent {
     var sourceMapFile: AbstractFile = null
     var sourceMapOutput: PrintWriter = null
     try {
+      sourceMapFile = getFileFor(cunit, sym, ".js.map", true)
+      sourceMapOutput = new PrintWriter(sourceMapFile.bufferedOutput)
       val printer =
-        if (true) { // TODO Some option
-          // With source map
-          sourceMapFile = getFileFor(cunit, sym, ".js.map", true)
-          sourceMapOutput = new PrintWriter(sourceMapFile.bufferedOutput)
-          new JSTreePrinterWithSourceMap(output, sourceMapOutput, outfile.name)
-        } else {
-          // Without source map
-          new JSTreePrinter(output)
-        }
+        new JSTreePrinterWithSourceMap(output, sourceMapOutput, outfile.name)
 
       printer.printTree(tree)
       printer.print(";")
       printer.println()
-
-      if (sourceMapFile ne null) {
-        printer.print(s"//@ sourceMappingURL=${sourceMapFile.name}")
-        printer.println()
-      }
+      printer.print(s"//@ sourceMappingURL=${sourceMapFile.name}")
+      printer.println()
 
       printer.close()
     } finally {

@@ -6,6 +6,8 @@ import java.io.PrintWriter
 
 import com.google.debugging.sourcemap.{ FilePosition, _ }
 
+import scala.collection.mutable
+
 object SourceMapCat {
   /** Concatenate JS files and their respective source maps
    *  In this implementation, source maps are assumed to be named after their
@@ -82,6 +84,56 @@ object SourceMapCat {
 
     outcode.close()
     outmap.close()
+  }
+
+  def composeSourceMap(sourceMap: SourceMapConsumerV3): SourceMapGenerator = {
+    val generator = SourceMapGeneratorFactory.getInstance(SourceMapFormat.V3)
+
+    val childSourceMaps = mutable.Map.empty[String, Option[SourceMapping]]
+
+    def getChildSourceMap(sourceName: String) = {
+      childSourceMaps getOrElseUpdate(sourceName, {
+        val mapFile = sourceMapOf(file(sourceName))
+        if (mapFile.exists)
+          Some(SourceMapConsumerFactory.parse(IO.read(mapFile)))
+        else
+          None
+      })
+    }
+
+    def getChildMapping(sourceName: String, lineNumber: Int, columnIndex: Int) = {
+      getChildSourceMap(sourceName) flatMap {
+        mapping => Option(mapping.getMappingForLine(lineNumber, columnIndex+1))
+      }
+    }
+
+    sourceMap.visitMappings(new SourceMapConsumerV3.EntryVisitor {
+      override def visit(sourceName: String, symbolName: String,
+          sourceStartPos: FilePosition,
+          startPos: FilePosition, endPos: FilePosition) {
+
+        //System.err.println(sourceName + "(" + sourceStartPos.getLine + ", " + sourceStartPos.getColumn + ")")
+        getChildMapping(sourceName, sourceStartPos.getLine,
+            sourceStartPos.getColumn) match {
+          case Some(mapping) =>
+            val childSourceName = mapping.getOriginalFile()
+            val childSymbolName =
+              if (mapping.hasIdentifier) mapping.getIdentifier
+              else symbolName
+            val childStartPos = new FilePosition(
+                mapping.getLineNumber, mapping.getColumnPosition)
+
+            generator.addMapping(childSourceName, childSymbolName,
+                childStartPos, startPos, endPos)
+
+          case None =>
+            generator.addMapping(sourceName, symbolName,
+                sourceStartPos, startPos, endPos)
+        }
+      }
+    })
+
+    generator
   }
 
   private def sourceMapOf(jsfile: File): File =

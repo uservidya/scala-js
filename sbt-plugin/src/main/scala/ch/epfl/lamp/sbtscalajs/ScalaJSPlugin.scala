@@ -3,7 +3,9 @@ package ch.epfl.lamp.sbtscalajs
 import sbt._
 import Keys._
 
-import SourceMapCat.catJSFilesAndTheirSourceMaps
+import SourceMapCat._
+
+import com.google.debugging.sourcemap._
 
 import com.google.javascript.jscomp.{
   SourceFile => ClosureSource,
@@ -150,6 +152,7 @@ object ScalaJSPlugin extends Plugin {
         val closureExterns = List(
             ClosureSource.fromCode("ScalaJSExterns.js", ScalaJSExterns))
         val output = target / (modName + "-opt.js")
+        val outputMap = target / (modName + "-opt.js.map")
 
         IO.createDirectory(new File(output.getParent))
 
@@ -157,6 +160,7 @@ object ScalaJSPlugin extends Plugin {
         options.prettyPrint = true
         CompilationLevel.ADVANCED_OPTIMIZATIONS.setOptionsForCompilationLevel(options)
         options.setLanguageIn(ClosureOptions.LanguageMode.ECMASCRIPT5)
+        options.setSourceMapOutputPath(outputMap.getPath)
 
         val compiler = new ClosureCompiler
         val result = compiler.compile(
@@ -176,7 +180,22 @@ object ScalaJSPlugin extends Plugin {
             warnings.foreach(err => logger.warn(err.toString))
           }
 
-          IO.write(output, compiler.toSource)
+          IO.write(output,
+              compiler.toSource +
+              "\n//@ sourceMappingURL="+outputMap.getName+"\n")
+
+          // Source map
+          val sourceMapBuilder = new java.lang.StringBuilder
+          result.sourceMap.appendTo(sourceMapBuilder, output.getName)
+          val sourceMap = new SourceMapConsumerV3
+          sourceMap.parse(sourceMapBuilder.toString)
+          val composedSourceMap = composeSourceMap(sourceMap)
+          val outputMapFile = new java.io.PrintWriter(outputMap)
+          try {
+            composedSourceMap.appendTo(outputMapFile, output.getName)
+          } finally {
+            outputMapFile.close()
+          }
         }
 
         output

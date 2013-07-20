@@ -111,8 +111,8 @@ abstract class GenJSCode extends SubComponent
             case EmptyTree => ()
             case PackageDef(_, stats) => stats foreach gen
             case cd: ClassDef =>
-              implicit val pos = tree.pos
               val sym = cd.symbol
+              implicit val pos = sym.pos
 
               representatives += representativeTopLevelClass(sym)
 
@@ -174,9 +174,9 @@ abstract class GenJSCode extends SubComponent
     def genClass(cd: ClassDef): js.Tree = {
       import js.TreeDSL._
 
-      implicit val jspos = cd.pos
       val ClassDef(mods, name, _, impl) = cd
       currentClassSym = cd.symbol
+      implicit val pos = currentClassSym.pos
 
       val displayName = currentClassSym.fullName
       val originalClassName = Some(currentClassSym.fullNameAsName('.').decoded)
@@ -298,9 +298,9 @@ abstract class GenJSCode extends SubComponent
     def genRawJSClassData(cd: ClassDef): js.Tree = {
       import js.TreeDSL._
 
-      implicit val pos = cd.pos
       val ClassDef(mods, name, _, impl) = cd
       val sym = cd.symbol
+      implicit val pos = sym.pos
 
       val classIdent = encodeFullNameIdent(sym)
 
@@ -317,8 +317,8 @@ abstract class GenJSCode extends SubComponent
     def genInterface(cd: ClassDef): js.Tree = {
       import js.TreeDSL._
 
-      implicit val pos = cd.pos
       val sym = cd.symbol
+      implicit val pos = sym.pos
 
       val classIdent = encodeFullNameIdent(sym)
 
@@ -338,10 +338,10 @@ abstract class GenJSCode extends SubComponent
     def genImplClass(cd: ClassDef): js.Tree = {
       import js.TreeDSL._
 
-      implicit val pos = cd.pos
       val ClassDef(mods, name, _, impl) = cd
       val sym = cd.symbol
       currentClassSym = sym
+      implicit val pos = sym.pos
 
       val generatedMembers = new ListBuffer[js.Tree]
 
@@ -386,8 +386,8 @@ abstract class GenJSCode extends SubComponent
     def genInstanceTestMethods(cd: ClassDef): js.Tree = {
       import js.TreeDSL._
 
-      implicit val pos = cd.pos
       val sym = cd.symbol
+      implicit val pos = sym.pos
 
       val displayName = sym.fullName
       val classIdent = encodeFullNameIdent(sym)
@@ -453,8 +453,8 @@ abstract class GenJSCode extends SubComponent
     def genDataRecord(cd: ClassDef): js.Tree = {
       import js.TreeDSL._
 
-      implicit val pos = cd.pos
       val sym = cd.symbol
+      implicit val pos = sym.pos
 
       val isInterface = sym.isInterface
       val isAncestorOfString = StringClass.ancestors contains sym
@@ -504,7 +504,7 @@ abstract class GenJSCode extends SubComponent
       }.toList
 
       {
-        implicit val pos = cd.pos
+        implicit val pos = currentClassSym.pos
         val superClass =
           if (currentClassSym.superClass == NoSymbol) ObjectClass
           else currentClassSym.superClass
