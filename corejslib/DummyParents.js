@@ -26,6 +26,8 @@ ScalaJS.inheritable.java\ufe33util\ufe33AbstractSet = function() {};
 /** @constructor */
 ScalaJS.inheritable.java\ufe33util\ufe33Dictionary = function() {};
 /** @constructor */
+ScalaJS.inheritable.java\ufe33util\ufe33concurrent\ufe33locks\ufe33AbstractQueuedSynchronizer = function() {};
+/** @constructor */
 ScalaJS.inheritable.org\ufe33xml\ufe33sax\ufe33helpers\ufe33DefaultHandler = function() {};
 /** @constructor */
 ScalaJS.inheritable.org\ufe33xml\ufe33sax\ufe33helpers\ufe33XMLFilterImpl = function() {};

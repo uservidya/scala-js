@@ -2075,7 +2075,7 @@ abstract class GenJSCode extends plugins.PluginComponent
       val sym = tree.symbol
       val Apply(fun @ Select(receiver0, _), args0) = tree
 
-      val funName = sym.originalName.decoded
+      val funName = sym.unexpandedName.decoded
       val receiver = genExpr(receiver0)
       val argArray = genPrimitiveJSArgs(sym, args0)
 
@@ -2171,13 +2171,13 @@ abstract class GenJSCode extends plugins.PluginComponent
 
         case _ =>
           def isJSGetter = {
-            sym.tpe.params.isEmpty && beforePhase(currentRun.uncurryPhase) {
+            sym.tpe.params.isEmpty && enteringPhase(currentRun.uncurryPhase) {
               sym.tpe.isInstanceOf[NullaryMethodType]
             }
           }
 
           def isJSSetter = {
-            funName.endsWith("_=") && beforePhase(currentRun.uncurryPhase) {
+            funName.endsWith("_=") && enteringPhase(currentRun.uncurryPhase) {
               sym.tpe.paramss match {
                 case List(List(arg)) => !isScalaRepeatedParamType(arg.tpe)
                 case _ => false
@@ -2290,7 +2290,7 @@ abstract class GenJSCode extends plugins.PluginComponent
      */
     private def genPrimitiveJSArgs(sym: Symbol, args: List[Tree])(
         implicit pos: Position): js.Tree = {
-      val wereRepeated = afterPhase(currentRun.typerPhase) {
+      val wereRepeated = exitingPhase(currentRun.typerPhase) {
         for {
           params <- sym.tpe.paramss
           param <- params
@@ -2418,7 +2418,7 @@ abstract class GenJSCode extends plugins.PluginComponent
 
       val isGlobalScope =
         isScalaJSDefined &&
-        beforePhase(currentRun.erasurePhase) {
+        enteringPhase(currentRun.erasurePhase) {
           sym.tpe.typeSymbol isSubClass JSGlobalScopeClass
         }
 
@@ -2457,7 +2457,7 @@ abstract class GenJSCode extends plugins.PluginComponent
    *  I.e., test whether the type extends scala.js.Any
    */
   def isRawJSType(tpe: Type): Boolean = {
-    (isScalaJSDefined && beforePhase(currentRun.erasurePhase) {
+    (isScalaJSDefined && enteringPhase(currentRun.erasurePhase) {
       tpe.typeSymbol isSubClass JSAnyClass
     })
   }
@@ -2469,9 +2469,9 @@ abstract class GenJSCode extends plugins.PluginComponent
   def jsNameOf(sym: Symbol): String = {
     if (isScalaJSDefined) {
       sym.getAnnotation(JSNameAnnotation).flatMap(_.stringArg(0)).getOrElse(
-          sym.originalName.decoded)
+          sym.unexpandedName.decoded)
     } else {
-      sym.originalName.decoded
+      sym.unexpandedName.decoded
     }
   }
 

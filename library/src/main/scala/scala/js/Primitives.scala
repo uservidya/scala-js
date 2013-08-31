@@ -244,8 +244,6 @@ object Number extends Object {
 /** Primitive JavaScript boolean. */
 sealed trait Boolean extends Any {
   def ||(that: Boolean): Boolean
-
-  def unary_!(): Boolean
 }
 
 /** The top-level `Boolean` JavaScript object. */
@@ -302,7 +300,7 @@ object String extends Object {
 }
 
 /** Primitive JavaScript undefined value. */
-sealed trait Undefined extends Any with NotNull
+sealed trait Undefined extends Any
 
 /** Base class of all JavaScript objects. */
 class Object extends Any {

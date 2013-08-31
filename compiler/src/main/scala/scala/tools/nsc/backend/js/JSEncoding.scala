@@ -48,7 +48,7 @@ trait JSEncoding extends SubComponent { self: GenJSCode =>
   def encodeLabelSym(sym: Symbol)(implicit pos: Position): js.Ident = {
     require(sym.isLabel, "encodeLabelSym called with non-label symbol: " + sym)
     js.Ident("$jslabel$" + sym.name.toString + "$" + sym.id,
-        Some(sym.originalName.decoded))
+        Some(sym.unexpandedName.decoded))
   }
 
   private lazy val allRefClasses: Set[Symbol] = {
@@ -78,7 +78,7 @@ trait JSEncoding extends SubComponent { self: GenJSCode =>
         "f"
 
     val encodedName = name + "$" + idSuffix
-    js.Ident(encodedName, Some(sym.originalName.decoded))
+    js.Ident(encodedName, Some(sym.unexpandedName.decoded))
   }
 
   def encodeMethodSym(sym: Symbol)(implicit pos: Position): js.Ident = {
@@ -89,7 +89,7 @@ trait JSEncoding extends SubComponent { self: GenJSCode =>
       else encodeClassFullName(sym.owner) + OuterSep + sym.name.toString
     val paramsString = makeParamsString(sym)
     js.Ident(encodedName + paramsString,
-        Some(sym.originalName.decoded + paramsString))
+        Some(sym.unexpandedName.decoded + paramsString))
   }
 
   def encodeStaticMemberSym(sym: Symbol)(implicit pos: Position): js.Ident = {
@@ -97,14 +97,14 @@ trait JSEncoding extends SubComponent { self: GenJSCode =>
         "encodeStaticMemberSym called with non-static symbol: " + sym)
     js.Ident(
         sym.name.toString + makeParamsString(List(internalName(sym.tpe))),
-        Some(sym.originalName.decoded))
+        Some(sym.unexpandedName.decoded))
   }
 
   def encodeLocalSym(sym: Symbol)(implicit pos: Position): js.Ident = {
     require(!sym.owner.isClass && sym.isTerm && !sym.isMethod && !sym.isModule,
         "encodeLocalSym called with non-local symbol: " + sym)
 
-    val origName = Some(sym.originalName.decoded)
+    val origName = Some(sym.unexpandedName.decoded)
     if (sym.isValueParameter) js.Ident("arg$" + sym.name.toString, origName)
     else js.Ident(sym.name.toString + "$jsid$" + sym.id, origName)
   }

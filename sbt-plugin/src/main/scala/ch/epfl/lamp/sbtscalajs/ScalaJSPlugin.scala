@@ -51,7 +51,8 @@ object ScalaJSPlugin extends Plugin {
       "scala-library", "scala-reflect") _
 
   val isScalaJSCompilerJar = isJarWithPrefix(
-      "scala-library", "scala-compiler", "scala-reflect", "scalajs-compiler") _
+      "scala-library", "scala-compiler", "scala-reflect", "scalajs-compiler",
+      "scala-parser-combinators", "scala-xml") _
 
   private val isWindows =
     System.getProperty("os.name").toLowerCase().indexOf("win") >= 0
@@ -450,7 +451,7 @@ object ScalaJSPlugin extends Plugin {
 
   val scalaJSSettings: Seq[Setting[_]] = scalaJSAbstractSettings ++ Seq(
       // you had better use the same version of Scala as Scala.js
-      scalaVersion := "2.10.2",
+      scalaVersion := "2.11.0-M5",
 
       // you will need the Scala.js compiler plugin
       autoCompilerPlugins := true,
