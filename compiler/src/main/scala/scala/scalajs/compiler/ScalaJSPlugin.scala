@@ -31,6 +31,6 @@ class ScalaJSPlugin(val global: Global) extends NscPlugin {
     val global: ScalaJSPlugin.this.global.type = ScalaJSPlugin.this.global
     val jsAddons: ScalaJSPlugin.this.jsAddons.type = ScalaJSPlugin.this.jsAddons
     override val runsAfter = List("mixin")
-    override val runsBefore = List("cleanup", "terminal")
+    override val runsBefore = List("delambdafy", "cleanup", "terminal")
   } with GenJSCode
 }

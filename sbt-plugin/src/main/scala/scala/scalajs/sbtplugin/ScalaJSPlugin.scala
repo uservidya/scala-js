@@ -516,6 +516,9 @@ object ScalaJSPlugin extends Plugin {
       // you had better use the same version of Scala as Scala.js
       scalaVersion := scalaJSScalaVersion,
 
+      // enable delambdafication, because it's so much better in Scala.js
+      scalacOptions += "-Ydelambdafy:method",
+
       // you will need the Scala.js compiler plugin
       autoCompilerPlugins := true,
       addCompilerPlugin("org.scala-lang.modules.scalajs" %% "scalajs-compiler" % scalaJSVersion),

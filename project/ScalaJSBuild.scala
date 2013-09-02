@@ -37,7 +37,8 @@ object ScalaJSBuild extends Build {
   )
 
   val myScalaJSSettings = scalaJSAbstractSettings ++ Seq(
-      autoCompilerPlugins := true
+      autoCompilerPlugins := true,
+      scalacOptions += "-Ydelambdafy:method"
   )
 
   // Used when compiling the compiler, adding it to scalacOptions does not help

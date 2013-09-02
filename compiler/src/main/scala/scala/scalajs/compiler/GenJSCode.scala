@@ -908,6 +908,10 @@ abstract class GenJSCode extends plugins.PluginComponent
         case mtch: Match =>
           genMatch(mtch)
 
+        /** Anonymous function (only with -Ydelambdafy:method) */
+        case fun: Function =>
+          genAnonFunction(fun)
+
         case EmptyTree =>
           // TODO Hum, I do not think this is OK
           js.Undefined()
@@ -1672,6 +1676,83 @@ abstract class GenJSCode extends plugins.PluginComponent
             matchBlock,
             resultVar)
       }
+    }
+
+    /** Generate JS code for an anonymous function
+     *
+     *  Anonymous functions survive until the backend only under
+     *  -Ydelambdafy:method
+     *  and when they do, their body is always of the form
+     *  EnclosingClass.this.someMethod(arg1, ..., argN, capture1, ..., captureM)
+     *  where argI are the formal arguments of the lambda, and captureI are
+     *  local variables or the enclosing def.
+     *
+     *  We translate them by instantiating scala.runtime.AnonFunctionN with a
+     *  JS anonymous function:
+     *
+     *  new ScalaJS.classes.scala_runtime_AnonFunctionN(
+     *    (function(arg1, ..., argN) {
+     *      return this.someMethod(arg1, ..., argN, capture1, ..., captureM)
+     *    }).bind(this)
+     *  )
+     *
+     *  In addition, input params are unboxed before use, and the result of
+     *  someMethod() is boxed back.
+     *
+     *  Currently, this translation does not take advantage of specialization.
+     */
+    def genAnonFunction(originalFunction: Function): js.Tree = {
+      import js.TreeDSL._
+      implicit val pos = originalFunction.pos
+      val Function(paramTrees, Apply(
+          targetTree @ Select(receiver, _), actualArgs)) = originalFunction
+
+      val target = targetTree.symbol
+      val functionTpe = originalFunction.tpe
+      val params = paramTrees.map(_.symbol)
+      val resultType = functionTpe.typeArgs.last
+
+      val genReceiver = genExpr(receiver)
+      val isInImplClass = target.owner.isImplClass
+
+      val jsFunction = {
+        js.Function(params.map(p => encodeLocalSym(p, freshName)), {
+          val unboxParams = for {
+            param <- params
+            tpe = param.tpe
+            if definitions.isPrimitiveValueType(tpe)
+          } yield {
+            val genParam = encodeLocalSym(param, freshName)
+            js.Assign(genParam, makeUnbox(genParam, tpe))
+          }
+
+          val call = js.ApplyMethod(
+              if (isInImplClass) genReceiver else js.This(),
+              encodeMethodSym(target),
+              actualArgs map genExpr)
+
+          val result =
+            if (!definitions.isPrimitiveValueType(resultType)) call
+            else makeBox(call, resultType)
+
+          js.Block(unboxParams :+ js.Return(result))
+        })
+      }
+
+      val boundFunction = {
+        if (isInImplClass) {
+          jsFunction
+        } else {
+          js.Apply(js.BracketSelect(
+              jsFunction, js.StringLiteral("bind")), List(genReceiver))
+        }
+      }
+
+      val wrapperClassFullName =
+        s"scala_runtime_AnonFunction${params.size}"
+      val wrapperClass = envField("classes") DOT wrapperClassFullName
+
+      js.New(wrapperClass, List(boundFunction))
     }
 
     /** Gen JS code for a primitive method call */
