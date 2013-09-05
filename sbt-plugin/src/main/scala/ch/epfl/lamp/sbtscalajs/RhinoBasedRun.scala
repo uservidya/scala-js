@@ -31,14 +31,6 @@ object RhinoBasedRun {
   private implicit def context2ops(ctx: Context): ContextOps =
     new ContextOps(ctx)
 
-  /** A proxy for a Logger that looks like a Mozilla console object */
-  private class LoggingConsole(logger: Logger) {
-    def log(x: Any): Unit = logger.info(x.toString)
-    def info(x: Any): Unit = logger.info(x.toString)
-    def warn(x: Any): Unit = logger.warn(x.toString)
-    def error(x: Any): Unit = logger.error(x.toString)
-  }
-
   /** A proxy for a ScalaJS "scope" field that loads scripts lazily
    *
    *  E.g., ScalaJS.c, which is a scope with the Scala.js classes, can be
@@ -133,15 +125,19 @@ object RhinoBasedRun {
    *  scripts in the sequence to load them lazily, the first time they are
    *  required.
    */
-  def scalaJSRunJavaScript(logger: Logger, inputs: Seq[File],
+  def scalaJSRunJavaScript(inputs: Seq[File], console: Option[AnyRef],
       useLazyScalaJSScopes: Boolean = false,
-      scalaJSClasspath: Seq[File] = Nil): Unit = {
+      scalaJSClasspath: Seq[File] = Nil,
+      mainClass: Option[String] = None,
+      arguments: Array[String] = Array[String]()): Unit = {
     val ctx = Context.enter()
     try {
       val scope = ctx.initStandardObjects()
 
-      ScriptableObject.putProperty(scope, "console",
-          Context.javaToJS(new LoggingConsole(logger), scope))
+      console foreach { consoleObject =>
+        ScriptableObject.putProperty(scope, "console",
+            Context.javaToJS(consoleObject, scope))
+      }
 
       try {
         if (!useLazyScalaJSScopes ||
@@ -153,6 +149,8 @@ object RhinoBasedRun {
           // The smart thing that hijacks ScalaJS-related things
           runJavaScriptWithLazyScalaJSScopes(ctx, scope, inputs, scalaJSClasspath)
         }
+
+        mainClass foreach (runMainClass(ctx, scope, _, arguments))
       } catch {
         case e: Exception =>
           e.printStackTrace() // print the stack trace while we're in the Context
@@ -218,5 +216,18 @@ object RhinoBasedRun {
           ctx.evaluateFile(scope, input)
       }
     }
+  }
+
+  private def runMainClass(ctx: Context, scope: Scriptable,
+      mainClass: String, arguments: Array[String]): Unit = {
+
+    val moduleFieldName = mainClass.replace(".", "\ufe33")
+
+    val script = s"""ScalaJS.modules.$moduleFieldName().main\ufe34AT\ufe34V(
+        ScalaJS.makeNativeArrayWrapper(
+            ScalaJS.data.java\ufe33lang\ufe33String.getArrayOf(),
+            []))"""
+
+    ctx.evaluateString(scope, script, "<top-level>", 1, null)
   }
 }
