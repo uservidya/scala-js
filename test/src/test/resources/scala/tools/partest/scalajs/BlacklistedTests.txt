@@ -11,6 +11,11 @@ run/t5018.scala
 run/t4929.scala
 run/t2417.scala
 run/t6197.scala
+run/t4813.scala
+run/lazy-concurrent.scala
+run/arrays.scala
+run/bugs.scala
+run/t5880.scala
 
 run/SymbolsTest.scala
 
@@ -18,9 +23,14 @@ run/SymbolsTest.scala
 
 run/t3822.scala
 
+# Crashes Rhino
+
+run/bridges.scala
+
 # Using partest properties
 
 run/tailcalls.scala
+run/t4294.scala
 
 # Using IO
 
@@ -31,6 +41,7 @@ run/Predef.readLine.scala
 run/t6063
 
 run/mixin-bridge-methods.scala
+run/t5125.scala
 
 run/reflection-repl-classes.scala
 run/t5256e.scala
@@ -39,6 +50,39 @@ run/reflection-constructormirror-toplevel-badpath.scala
 run/t5276_1b.scala
 run/reflection-sorted-decls.scala
 run/toolbox_typecheck_implicitsdisabled.scala
+run/t5418b.scala
+run/toolbox_typecheck_macrosdisabled2.scala
+run/abstypetags_serialize.scala
+run/all-overridden.scala
+run/showraw_tree_kinds.scala
+run/showraw_tree_types_ids.scala
+run/showraw_tree_types_typed.scala
+run/t5266_2.scala
+run/t1505.scala
+run/t5274_1.scala
+run/t5224.scala
+run/reflection-sanitychecks.scala
+run/t6086-vanilla.scala
+run/t5277_2.scala
+run/reflection-methodsymbol-params.scala
+run/reflection-valueclasses-standard.scala
+run/t5274_2.scala
+run/t5423.scala
+run/reflection-modulemirror-toplevel-good.scala
+run/t5419.scala
+run/t5271_3.scala
+run/reflection-enclosed-nested-basic.scala
+run/fail-non-value-types.scala
+run/reflection-mem-typecheck.scala
+run/exprs_serialize.scala
+run/t5258a.scala
+run/typetags_without_scala_reflect_manifest_lookup.scala
+run/t4110-new.scala
+run/t5273_2b_newpatmat.scala
+run/t6277.scala
+run/t5335.scala
+run/toolbox_typecheck_macrosdisabled.scala
+
 run/reify_newimpl_29.scala
 run/reify_magicsymbols.scala
 run/reify_inheritance.scala
@@ -47,14 +91,19 @@ run/reify_typerefs_2b.scala
 run/reify_csv.scala
 run/reify_inner2.scala
 run/reify_maps_oldpatmat.scala
-run/t5418b.scala
-run/toolbox_typecheck_macrosdisabled2.scala
-run/abstypetags_serialize.scala
-run/all-overridden.scala
-run/showraw_tree_kinds.scala
-run/t5266_2.scala
-run/t1505.scala
-run/t5274_1.scala
+run/reify_newimpl_43.scala
+run/reify_nested_inner_refers_to_local.scala
+run/reify_closure7.scala
+run/reify_closure8b.scala
+run/reify_typerefs_3b.scala
+run/reify_newimpl_44.scala
+run/reify_newimpl_06.scala
+run/reify_newimpl_05.scala
+run/reify_newimpl_20.scala
+run/reify_newimpl_23.scala
+run/reify_metalevel_breach_-1_refers_to_1.scala
+run/reify_newimpl_41.scala
+run/reify-repl-fail-gracefully.scala
 
 # Using macros
 
@@ -64,6 +113,15 @@ run/macro-reflective-ma-normal-mdmi
 run/macro-expand-implicit-argument
 run/macro-range
 run/macro-repl-dontexpand.scala
+run/macro-reify-abstypetag-usetypetag
+run/macro-reify-nested-b
+run/macro-expand-implicit-macro-has-implicit
+run/macro-typecheck-implicitsdisabled
+run/macro-abort-fresh
+run/macro-expand-nullary-generic
+
+run/t5940.scala
+run/t5713
 
 # Using parallel collections
 
@@ -72,6 +130,7 @@ run/t4894.scala
 run/ctries-new
 run/collection-conversions.scala
 run/concurrent-map-conversions.scala
+run/t4761.scala
 
 # Using parser combinators
 
@@ -84,13 +143,25 @@ run/packrat3.scala
 run/t5843.scala
 run/t3705.scala
 run/t2354.scala
+run/t1773.scala
+run/t5052.scala
+run/t2125.scala
+
+# Using Swing
+
+run/t3613.scala
 
 # Using the REPL
 
 run/t4285.scala
 run/constant-type.scala
 run/repl-bare-expr.scala
+run/repl-parens.scala
+run/repl-assign.scala
+run/t5583.scala
+run/treePrint.scala
 
 # Using the compiler API
 
 run/t2512.scala
+run/analyzerPlugins.scala
