@@ -1,0 +1,96 @@
+#
+# RUN
+#
+
+# Using parts of the javalib we don't plan to support
+
+run/t0412.scala
+run/t3518.scala
+run/t6198.scala
+run/t5018.scala
+run/t4929.scala
+run/t2417.scala
+run/t6197.scala
+
+run/SymbolsTest.scala
+
+# Taking too much time, because JavaScript is not as fast as the JVM
+
+run/t3822.scala
+
+# Using partest properties
+
+run/tailcalls.scala
+
+# Using IO
+
+run/Predef.readLine.scala
+
+# Using reflection
+
+run/t6063
+
+run/mixin-bridge-methods.scala
+
+run/reflection-repl-classes.scala
+run/t5256e.scala
+run/typetags_core.scala
+run/reflection-constructormirror-toplevel-badpath.scala
+run/t5276_1b.scala
+run/reflection-sorted-decls.scala
+run/toolbox_typecheck_implicitsdisabled.scala
+run/reify_newimpl_29.scala
+run/reify_magicsymbols.scala
+run/reify_inheritance.scala
+run/reify_newimpl_12.scala
+run/reify_typerefs_2b.scala
+run/reify_csv.scala
+run/reify_inner2.scala
+run/reify_maps_oldpatmat.scala
+run/t5418b.scala
+run/toolbox_typecheck_macrosdisabled2.scala
+run/abstypetags_serialize.scala
+run/all-overridden.scala
+run/showraw_tree_kinds.scala
+run/t5266_2.scala
+run/t1505.scala
+run/t5274_1.scala
+
+# Using macros
+
+run/macro-expand-varargs-explicit-over-varargs
+run/macro-expand-tparams-explicit
+run/macro-reflective-ma-normal-mdmi
+run/macro-expand-implicit-argument
+run/macro-range
+run/macro-repl-dontexpand.scala
+
+# Using parallel collections
+
+run/t5375.scala
+run/t4894.scala
+run/ctries-new
+run/collection-conversions.scala
+run/concurrent-map-conversions.scala
+
+# Using parser combinators
+
+run/t1100.scala
+run/parserNoSuccessMessage.scala
+run/packrat3.scala
+
+# Using scala.xml
+
+run/t5843.scala
+run/t3705.scala
+run/t2354.scala
+
+# Using the REPL
+
+run/t4285.scala
+run/constant-type.scala
+run/repl-bare-expr.scala
+
+# Using the compiler API
+
+run/t2512.scala
