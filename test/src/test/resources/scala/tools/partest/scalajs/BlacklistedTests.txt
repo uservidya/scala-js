@@ -1,4 +1,80 @@
 #
+# POS
+#
+
+# Using macros
+
+pos/annotated-original
+pos/annotated-treecopy
+pos/attachments-typed-another-ident
+pos/attachments-typed-ident
+pos/t5692a
+pos/t5692b
+pos/t5744
+pos/t7377
+pos/t7461
+pos/t7516
+
+# Using Jsoup, what's that?
+pos/cycle-jsoup.scala
+
+# Using .java source files
+pos/signatures
+pos/t1232
+pos/t1263
+pos/t1711
+pos/t1745
+pos/t3249
+pos/t3486
+
+
+#
+# NEG
+#
+
+# Yielding a different error message, but a valid one too
+
+neg/t7251
+
+# Using macros
+
+neg/macro-divergence-controlled
+neg/macro-invalidusage-badargs
+neg/macro-invalidusage-nontypeable
+neg/t6539
+neg/t7157
+
+# Implementation restrictions on the JVM not applying to JavaScript
+
+neg/main1.scala
+neg/t3692-new.scala
+neg/t4749.scala
+neg/t7324.scala
+
+# Warnings emitted by inliner
+
+neg/t3234.scala
+
+# Using the compiler API
+
+neg/t6446-additional
+neg/t6446-list
+neg/t6446-missing
+neg/t6446-show-phases.scala
+
+neg/t7494-after-terminal
+neg/t7494-before-parser
+neg/t7494-multi-right-after
+neg/t7494-no-options
+neg/t7494-right-after-before
+neg/t7494-right-after-terminal
+
+# Er ... weird thing
+
+neg/t5148.scala
+
+
+#
 # RUN
 #
 
