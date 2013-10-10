@@ -11,15 +11,23 @@ import Path._
 
 import scala.tools.nsc.{ Global, Settings }
 import scala.tools.nsc.reporters.{ Reporter }
-import scala.tools.nsc.scalajs.JSGlobal
+import scala.tools.nsc.plugins.Plugin
+
+import scala.tools.nsc.scalajs.ScalaJSPlugin
 
 import sbt.testing.{ EventHandler, Logger, Fingerprint }
 import java.io.File
 import java.net.URLClassLoader
 
 trait ScalaJSDirectCompiler extends DirectCompiler {
-  override def newGlobal(settings: Settings, reporter: Reporter): PartestGlobal =
-    new PartestGlobal(settings, reporter) with JSGlobal
+  override def newGlobal(settings: Settings, reporter: Reporter): PartestGlobal = {
+    new PartestGlobal(settings, reporter) {
+      override protected def loadRoughPluginsList(): List[Plugin] = {
+        (super.loadRoughPluginsList() :+
+            Plugin.instantiate(classOf[ScalaJSPlugin], this))
+      }
+    }
+  }
 }
 
 trait ScalaJSRunner extends nest.Runner {
