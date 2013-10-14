@@ -2,19 +2,6 @@
 # POS
 #
 
-# Using macros
-
-pos/annotated-original
-pos/annotated-treecopy
-pos/attachments-typed-another-ident
-pos/attachments-typed-ident
-pos/t5692a
-pos/t5692b
-pos/t5744
-pos/t7377
-pos/t7461
-pos/t7516
-
 # Using Jsoup, what's that?
 pos/cycle-jsoup.scala
 
@@ -35,14 +22,6 @@ pos/t3486
 # Yielding a different error message, but a valid one too
 
 neg/t7251
-
-# Using macros
-
-neg/macro-divergence-controlled
-neg/macro-invalidusage-badargs
-neg/macro-invalidusage-nontypeable
-neg/t6539
-neg/t7157
 
 # Implementation restrictions on the JVM not applying to JavaScript
 
@@ -310,50 +289,6 @@ run/reify_newimpl_27.scala
 
 run/t2111.scala
 run/enums.scala
-
-# Using macros
-
-run/macro-expand-varargs-explicit-over-varargs
-run/macro-expand-tparams-explicit
-run/macro-reflective-ma-normal-mdmi
-run/macro-expand-implicit-argument
-run/macro-range
-run/macro-repl-dontexpand.scala
-run/macro-reify-abstypetag-usetypetag
-run/macro-reify-nested-b
-run/macro-expand-implicit-macro-has-implicit
-run/macro-typecheck-implicitsdisabled
-run/macro-abort-fresh
-run/macro-expand-nullary-generic
-run/macro-reify-unreify
-run/macro-reify-splice-outside-reify
-run/macro-expand-varargs-explicit-over-nonvarargs-good
-run/macro-quasiinvalidbody-c
-run/macro-invalidusage-partialapplication-with-tparams
-run/macro-basic-mamd-mi
-run/macro-reify-abstypetag-notypeparams
-run/macro-expand-implicit-macro-is-implicit
-run/macro-invalidret-nontypeable
-run/macro-reify-tagless-a
-run/macro-reify-typetag-notypeparams
-run/macro-undetparams-consfromsls
-run/macro-reify-freevars
-run/macro-reify-abstypetag-typeparams-notags
-run/macro-reify-typetag-typeparams-tags
-run/macro-invalidusage-partialapplication
-run/macro-bundle
-run/macro-undetparams-implicitval
-run/macro-typecheck-macrosdisabled2
-run/macro-def-infer-return-type
-run/macro-sip19-revised
-run/macro-impl-default-params
-run/macro-expand-overload
-run/macro-divergence-spurious
-run/macro-expand-override
-
-run/t5940.scala
-run/t5713
-run/t6394b
 
 # Expecting some particular value of hashCode()
 
