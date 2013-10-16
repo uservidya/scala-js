@@ -62,13 +62,21 @@ trait ScalaJSSuiteRunner extends SuiteRunner {
     super.runTestsForFiles(kindFiles.filterNot(isBlacklisted), kind)
   }
 
-  private lazy val blacklistedTestFileNames = {
-    val source = scala.io.Source.fromURL(getClass.getResource(
-        "/scala/tools/partest/scalajs/BlacklistedTests.txt"))
+  private lazy val useBlacklist =
+    scala.util.Properties.propOrFalse("scala.tools.partest.scalajs.useblacklist")
+
+  private lazy val blacklistedTestFileNames =
+    readTestList("/scala/tools/partest/scalajs/BlacklistedTests.txt")
+
+  private lazy val whitelistedTestFileNames =
+    readTestList("/scala/tools/partest/scalajs/WhitelistedTests.txt")
+
+  private def readTestList(resourceName: String): Set[String] = {
+    val source = scala.io.Source.fromURL(getClass.getResource(resourceName))
 
     val srcDir = PathSettings.srcDir
 
-    val blacklistedFileNames = for {
+    val fileNames = for {
       line <- source.getLines
       trimmed = line.trim
       if trimmed != "" && !trimmed.startsWith("#")
@@ -76,11 +84,13 @@ trait ScalaJSSuiteRunner extends SuiteRunner {
       (srcDir / trimmed).toCanonical.getAbsolutePath
     }
 
-    blacklistedFileNames.toSet
+    fileNames.toSet
   }
 
   def isBlacklisted(testFile: File): Boolean = {
-    blacklistedTestFileNames.contains(testFile.toCanonical.getAbsolutePath)
+    val absPath = testFile.toCanonical.getAbsolutePath
+    if (useBlacklist) blacklistedTestFileNames.contains(absPath)
+    else !whitelistedTestFileNames.contains(absPath)
   }
 }
 
