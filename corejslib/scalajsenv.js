@@ -57,6 +57,12 @@ var ScalaJS = {
     return result;
   },
 
+  extend: function(dest, source) {
+    for (var prop in source)
+      if (source.hasOwnProperty(prop))
+        dest[prop] = source[prop];
+  },
+
   // Runtime functions
 
   isScalaJSObject: function(obj) {

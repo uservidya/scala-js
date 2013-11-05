@@ -571,10 +571,13 @@ trait JSDesugaring extends SubComponent { self: GenJSCode =>
       val methodsDefs = for {
         m @ js.MethodDef(name, _, _) <- tree.defs
         if name.name != "constructor"
-      } yield genAddMethodDefToPrototype(tree, m)
+      } yield genMethodDef(tree, m)
+      val extender = js.ObjectConstr(methodsDefs)
+      val extendStmt = js.ApplyMethod(js.Ident("ScalaJS"), js.Ident("extend"),
+          List(js.DotSelect(tree.name, js.Ident("prototype")), extender))
 
       val result = transformStat(flattenBlock(
-          typeFunctionDef :: methodsDefs))
+          typeFunctionDef :: extendStmt :: Nil))
 
       currentClassDef = savedCurrentClassDef
 
@@ -615,11 +618,11 @@ trait JSDesugaring extends SubComponent { self: GenJSCode =>
     }
 
     /** Generate the addition to the prototype of a method definition */
-    def genAddMethodDefToPrototype(cd: js.ClassDef,
-        method: js.MethodDef): js.Tree = {
+    def genMethodDef(cd: js.ClassDef,
+        method: js.MethodDef): (js.PropertyName, js.Tree) = {
       implicit val pos = method.pos
       val methodFun = js.Function(method.args, method.body)
-      genAddToPrototype(cd, method.name, methodFun)
+      (method.name, methodFun)
     }
 
     /** Generate `classVar.prototype.name = value` */

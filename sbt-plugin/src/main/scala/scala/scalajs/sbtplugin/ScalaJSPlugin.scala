@@ -359,12 +359,18 @@ object ScalaJSPlugin extends Plugin {
 
           IO.createDirectory(new File(output.getParent))
 
+          val compiler = new ClosureCompiler
+
           val options = new ClosureOptions
           options.prettyPrint = optimizeJSPrettyPrint.value
           CompilationLevel.ADVANCED_OPTIMIZATIONS.setOptionsForCompilationLevel(options)
           options.setLanguageIn(ClosureOptions.LanguageMode.ECMASCRIPT5)
 
-          val compiler = new ClosureCompiler
+          options.setCustomPasses(
+              com.google.common.collect.ArrayListMultimap.create())
+          options.customPasses.put(CustomPassExecutionTime.BEFORE_CHECKS,
+              new ScalaJSClosurePass(compiler))
+
           val result = compiler.compile(
               closureExterns, closureSources, options)
 
